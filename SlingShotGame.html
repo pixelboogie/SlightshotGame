@@ -1,0 +1,604 @@
+
+<html>
+<head>
+    <title>PixelBoogie - Slingshot Game</title>
+   
+    <script type="text/javascript">
+	
+	var triesRemaining = 3;
+	var myVelocity = 900;  //1200
+	
+	var score = 0;
+	var cwidth = 2000;
+	var cheight = 600;
+	var ctx;
+	var canvas1;
+	var everything = [];
+	var tid;
+	var hitId;
+	var startrockx = 450; //450 
+	var startrocky = 280; //280
+	
+	
+	var boulder = new Image();
+	boulder.src = "img/sheep.png";
+	 var boulderx = 410;
+	 var bouldery = 255;
+	 var boulderW = 120;
+	 var boulderH = 85;
+	
+	var ballx = 160;
+	var bally = 200;
+	var ballrad = 35;
+	var ballradsq = ballrad*ballrad;
+	
+	
+	var inmotion = false;
+	var horvelocity;
+	var verticalvel1;
+	var verticalvel2;
+	var gravity = 5;  //arbitrary value. It produces nice arcs.
+	
+	
+	var chicken = new Image();
+	chicken.src = "img/farmer.png";
+	var feathers = new Image();
+	feathers.src = "img/farmer.png";
+	
+	
+	
+	
+//Create 'objects', each with a draw method for placement on the canvas	
+function Sling(bx,by,s1x,s1y,s2x,s2y,s3x,s3y,stylestring) {
+	this.bx = bx;
+	this.by = by;
+	this.s1x = s1x;
+	this.s1y = s1y;
+	this.s2x = s2x;
+	this.s2y = s2y;
+	this.s3x = s3x;
+	this.s3y = s3y;
+	this.strokeStyle = stylestring;
+	this.draw = drawsling;
+	this.moveit = movesling;
+}
+
+function drawsling() {
+	ctx.strokeStyle = this.strokeStyle;
+	ctx.lineWidth = 10;
+	ctx.lineCap = 'round';
+	ctx.beginPath();
+	ctx.moveTo(this.bx,this.by);
+	ctx.lineTo(this.s1x,this.s1y);
+	ctx.moveTo(this.bx,this.by);
+	ctx.lineTo(this.s2x,this.s2y);
+	ctx.moveTo(this.s1x,this.s1y);
+	ctx.lineTo(this.s2x,this.s2y);
+	ctx.lineTo(this.s3x,this.s3y);
+	ctx.stroke();
+}
+function movesling(dx,dy) {
+	this.bx +=dx;
+	this.by +=dy;
+	this.s1x +=dx;
+	this.s1y +=dy;
+	this.s2x +=dx;
+	this.s2y +=dy;
+	this.s3x +=dx;
+	this.s3y +=dy;
+}
+
+var mysling= new Sling(startrockx,startrocky,startrockx+80,startrocky-10,startrockx+80,
+					   startrocky+10,startrockx+70,startrocky+180,"rgb(120,20,10)");
+ 
+function resetSling() {
+
+//alert(everything.length);
+
+	//cball.sx = mx;
+	//cball.sy = my;
+	//mysling.bx = cball.sx;
+	//mysling.by = cball.sy;
+	
+	
+	mysling.bx = startrockx;
+	mysling.by = startrocky;
+	
+	//drawall();
+	
+}
+
+
+
+function Ball(sx,sy,swidth,sheight,img) {
+//function Ball(sx,sy,rad,stylestring) {
+this.sx = sx;
+this.sy = sy;
+this.swidth = swidth;
+this.sheight = sheight;
+this.img = img;
+this.draw = drawAnImage;
+this.moveit = moveball;
+}
+
+function drawball() {
+	ctx.fillStyle=this.fillstyle;
+	ctx.beginPath();
+	//ctx.fillStyle= rgb(0,0,0);
+	ctx.arc(this.sx,this.sy,this.rad,0,Math.PI*2,true);
+	ctx.fill();
+	
+	
+	//ctx.drawImage(this.img,this.sx,this.sy,this.swidth,this.sheight);
+	//ctx.drawImage(this.img,200,200,200,200);
+}
+
+function moveball(dx,dy) {
+	this.sx +=dx;
+	this.sy +=dy;
+}
+
+function resetBall() {
+cball.sx = boulderx;
+cball.sy = bouldery;
+//drawAll();
+ 
+}
+
+
+//var cball = new Ball(startrockx,startrocky,ballrad,"rgb(0,0,0)");
+//var cball = new Ball(startrockx,startrocky,ballrad,"boulder");
+//var cball2 = new Ball(40,40,ballrad,"rgb(0,0,0)");
+var cball = new Ball(boulderx,bouldery,boulderW,boulderH,boulder);
+
+
+
+function myrectangle(sx,sy,swidth,sheight,stylestring) {
+	this.sx = sx;
+	this.sy = sy;
+	this.swidth = swidth;
+	this.sheight = sheight;
+	this.fillstyle = stylestring;
+	this.draw = drawrects;
+	this.moveit = moverect;
+}
+
+function drawrects() {
+	ctx.fillStyle = this.fillstyle;
+	ctx.fillRect(this.sx,this.sy,this.swidth,this.sheight);	
+}
+
+function moverect(dx,dy) {
+   this.sx += dx;
+   this.sy += dy;
+}
+
+function Picture (sx,sy,swidth,sheight,imga) {
+	
+	this.sx = sx;
+	
+	//this.sx = Math.floor((Math.random()*1200)+100); 	
+	
+	this.sy = sy;
+	this.img = imga;
+	this.swidth = swidth;
+	this.sheight = sheight;
+	this.draw = drawAnImage;
+}
+function drawAnImage() {
+	ctx.drawImage(this.img,this.sx,this.sy,this.swidth,this.sheight);
+	
+}
+
+var target = new Picture(1000,210,176,224,chicken);
+var ground = new myrectangle(0,370,1,1,"rgb(240,167,65)");
+everything.push(target);
+everything.push(ground);
+everything.push(mysling);
+everything.push(cball);
+
+
+
+//called onload. Sets up ctx context for drawing and canvas1 for events
+function init(){
+    ctx = document.getElementById('canvas').getContext('2d');
+    canvas1 = document.getElementById('canvas');
+    points = document.getElementById("points");
+    missed = document.getElementById("missed");
+    replay = document.getElementById("replay");
+    scoreBoard = document.getElementById("scoreBoard");
+    txtScore = document.getElementById("txtScore");
+    txtTries = document.getElementById("txtTries");
+	
+   canvas1.addEventListener('mousedown',findball,false);
+   canvas1.addEventListener('mousemove',moveit,false);
+   canvas1.addEventListener('mouseup',finish,false);
+   
+   replay.addEventListener('mousedown',replayIt,false);
+      
+ //initial drawing 
+  drawall();  
+}
+
+
+function replayIt(){
+    
+       window.location = 'SlingShotGame.html';
+}
+
+// called on mousedown
+function findball(ev) {
+  	var mx;
+	var my;
+	if ( ev.layerX ||  ev.layerX == 0) { // Firefox, Chrome
+   			mx= ev.layerX;
+    		my = ev.layerY;
+  		} else if (ev.offsetX || ev.offsetX == 0) { // Opera,
+    		mx = ev.offsetX;
+    		my = ev.offsetY;
+  		}
+		
+	// if clicking within distance of the ball, we are in motion
+	//if (distsq(mx,my, cball.sx,cball.sy)<ballradsq) {
+	if (distsq(mx-(boulderW*.5),my-(boulderH*.5), cball.sx,cball.sy)<ballradsq) {
+	inmotion = true;
+		drawall();
+	}
+}
+//use square of distance to lesson computation
+function distsq(x1,y1,x2,y2) {
+	return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
+}
+//for dragging of ball and modification of mysling
+function moveit(ev) {
+           
+	var mx;
+	var my;
+	if (inmotion) {
+	    
+		
+	if ( ev.layerX ||  ev.layerX == 0) { // Firefox
+   			mx= ev.layerX;
+    		my = ev.layerY;
+  		} else if (ev.offsetX || ev.offsetX == 0) { // Opera
+    		mx = ev.offsetX;
+    		my = ev.offsetY;
+  		}
+	
+	cball.sx = mx-(boulderW * .5);
+	cball.sy = my-(boulderH * .5);
+	
+	
+	
+	mysling.bx = mx;
+	mysling.by = my;
+	
+	
+	   
+	drawall();
+	
+	}
+}
+
+function finish(ev) {
+    //at mouse up, if ball and mysling have been dragged, set up for ball to travel
+    // in ballistic arc.
+    if (inmotion) {
+	inmotion = false;
+//want initial velocity to increase with length, make it the square for convenience
+//the 700 is arbitrary. It makes a nice arc!
+	 var outofcannon = distsq(mysling.bx,mysling.by,mysling.s1x,mysling.s1y)/myVelocity;
+//use angle based on line interval bx,by to s1x,s1y, the upper arm of sling
+  var angleradians = -Math.atan2(mysling.s1y-mysling.by,mysling.s1x-mysling.bx);
+  horvelocity =  outofcannon*Math.cos(angleradians);
+  verticalvel1 = - outofcannon*Math.sin(angleradians);
+  drawall();
+	tid = setInterval(change,120);
+	}
+}
+
+function moveRR(){
+    target.sx = Math.floor((Math.random()*1000)+800); 
+}
+
+function drawall() {
+//drawall erases the whole canvas and then draws everything in everything array
+	ctx.clearRect(0,0,cwidth,cheight);
+  
+	var i;
+	for (i=0;i<everything.length;i++) {
+		everything[i].draw();
+	}
+}
+
+function endTurn(hitIt){
+clearInterval(tid);
+
+   if(hitIt){
+    points.className += "pointBurst";
+    score = score + 100;
+    }else{
+    missed.className += "pointBurst";	
+   }
+	
+    triesRemaining --;
+    
+    if(triesRemaining>0){
+    /// wait a beat for the impact animation to play
+   hitId = setTimeout(nextTurn,1000);
+    }else{
+    //updateScore();
+   endGameId = setTimeout(endGame,2000);
+    }
+}
+
+
+
+
+
+
+function endGame(){
+    clearTimeout(endGameId);
+    //points.className = "";
+    //missed.className = "";
+    //txtScore.innerHTML = "Score: " + score + "&nbsp;&nbsp;&nbsp;&nbsp; ";
+    //txtTries.innerHTML = "Tries: " + triesRemaining;
+    ////alert("the end.")
+    updateScore();
+//    window.location = 'GameEnd.html';
+ctx.clearRect(0,0,cwidth,cheight);
+replay.className="show";
+
+}
+	
+
+
+
+
+
+
+
+function nextTurn(){
+    clearTimeout(hitId);
+		    
+    moveRR();
+    resetBall();
+    //findball();
+    resetSling();
+    //alert("------");
+    target.img = chicken;
+    //points.className = "";
+    //missed.className = "";
+    //txtScore.innerHTML = "Score: " + score + "&nbsp;&nbsp;&nbsp;&nbsp; ";
+    //txtTries.innerHTML = "Tries: " + triesRemaining;
+    updateScore();
+    drawall();
+}
+	
+	
+	
+function updateScore(){
+    points.className = "";
+    missed.className = "";
+    //txtScore.innerHTML = "Score: " + score + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+        txtScore.innerHTML = "Score: " + score;
+    txtTries.innerHTML = "Tries: " + triesRemaining;
+}
+
+function change() {
+//this creates the motion of the ball from the slingshot to either the target or the ground
+	var dx = horvelocity;
+	verticalvel2 = verticalvel1 + gravity;
+	var dy = (verticalvel1 + verticalvel2)*.5;
+	verticalvel1 = verticalvel2;
+	cball.moveit(dx,dy);
+	//check for hitting target
+	//var bx = cball.sx;
+	//var by = cball.sy;
+	//
+	
+	var bx = cball.sx-(boulderW*.5);
+	var by = cball.sy-(boulderH*.5)
+	//check for inside of target
+	// adjust boundaries by 40 to make the hit area smaller
+	//if ((bx>=target.sx+40)&&(bx<=(target.sx+target.swidth-40))&&
+	//(by>=target.sy+40)&&(by<=(target.sy+target.sheight-40))) {
+		
+	if ((bx>=target.sx+5)&&(bx<=(target.sx+target.swidth+5))&&
+	(by>=target.sy-100)&&(by<=(target.sy+target.sheight))) {
+		
+		//clearInterval(tid);
+		//change image to the feathers image
+		target.img = feathers;
+		endTurn(true);
+	}else{
+	//check for getting beyond ground level
+	if (by>=ground.sy) {
+		
+		{
+		endTurn(false);		
+		}
+
+	}
+	}
+	drawall();	
+}
+
+</script>
+<style type="text/css">
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,		
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+
+#points.pointBurst {
+	
+	opacity:1;
+	/* -webkit-transition: opacity .5s ease-in-out; */
+	/*font-size:48px;*/
+	-moz-transform: scale(20);
+	-webkit-transform: scale(5);
+	
+	top: 200px;
+	
+	-moz-transition: all .3s;	
+	-webkit-transition: all .5s;
+	transition: all .3s;
+ }
+ 
+#points {
+	opacity:0;
+	/*background:red;*/
+	position:absolute;
+	/*padding: 10px;*/
+	color: white;
+	
+	left:900px;
+	top:400px;
+	z-index:10;
+	font-size:12px;
+	font-family: "Arial", "Helvetica", sans-serif;
+	
+/*	-moz-border-radius: 20px;
+	-moz-transform: scale(1);*/
+	text-shadow: rgba(0,0,0,.8) 1px 1px 1px;
+}
+
+#missed.pointBurst {
+	/*top:400px;*/
+	opacity:1;
+	/* -webkit-transition: opacity .5s ease-in-out; */
+	/*font-size:48px;*/
+    -webkit-transition: all 1.5s;
+    -moz-transition: all 1.5s;
+    transition: all 1.5s;
+ }
+ 
+#missed {
+	opacity:0;
+	/*background:red;*/
+	position:absolute;
+	left:740px;
+	top:650px;
+	z-index:10;
+	font-size:40px;
+	font-family: "Arial", "Helvetica", sans-serif;
+	letter-spacing: 50px;
+}
+#replay {
+	opacity:0;
+	background:#b87639;
+	position:absolute;
+	padding: 7px;
+	left:830px;
+	border-color: #76491e;
+/*	border-bottom-color: #76491e;*/
+	border: solid;
+	cursor: pointer;
+	top:400px;
+	z-index:11;
+	font-size:48px;
+	color: white;
+	font-family: "Arial", "Helvetica", sans-serif;
+	font-weight: bold;	
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);        
+        box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);
+	letter-spacing: -1px;
+	
+	
+}
+#replay.show{
+	opacity:1;
+	}
+
+
+body{
+  
+    /*background-color: blue;*/
+    background-image: url("img/bg.jpg");
+    background-color: #eac184;
+    /*background-repeat: no-repeat;*/
+    background-repeat: repeat-x;
+}
+#scoreBoard {
+
+	/*background:tan;*/
+	/*position:absolute;*/
+	position:relative;
+	/*left:700px;*/
+	top:150px;
+	z-index:20;
+	/*font-size:64px;
+	color: white;*/
+
+/*	padding: 5px;*/
+
+
+	/*width:130px;*/
+	/*width:2000px;*/
+	width:300px;
+	/*width:100%;*/
+	background-color: black;
+	
+	height: 130px;    
+	
+	/*float: right;
+	right: 0px;*/	
+
+    margin-left:auto;
+    margin-right:auto;
+    
+	
+}
+
+
+
+#txtScore{
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-size:48px;
+    color: white;
+/*    margin-left:700px;
+    float: left;*/
+text-align: center;
+    
+}
+#txtTries{
+  
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-size:48px;
+    color: white;
+    text-align: center;
+    
+}
+
+
+</style>
+</head>
+<body onLoad="init();">  
+<canvas id="canvas" width="2000" height="600">
+Your browser doesn't support the HTML5 element canvas.
+</canvas>  
+<br/>
+<div id="scoreBoard" class=""><p id="txtScore">Score: 0 </p><p id="txtTries"> Tries: 3</p></div>
+<div id="points" class="">+100</div>
+<div id="missed" class="">Missed!</div>
+<div id="replay" class="">Replay?</div>
+</body>
+</html>
