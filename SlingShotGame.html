@@ -3,10 +3,14 @@
 <head>
     <title>PixelBoogie - Slingshot Game</title>
    
+
+	<link href="https://fonts.googleapis.com/css?family=Alegreya+SC&display=swap" rel="stylesheet">
+
+
     <script type="text/javascript">
 	
 	var triesRemaining = 3;
-	var myVelocity = 1200;  //1200
+	var myVelocity = 600;  //1200 lower = faster
 	
 	var score = 0;
 	var cwidth = 2000;
@@ -38,7 +42,8 @@
 	var horvelocity;
 	var verticalvel1;
 	var verticalvel2;
-	var gravity = 6;  //arbitrary value. It produces nice arcs.
+	var gravity = 11;  //6, 15 seems not enough
+	
 	
 	var targetStartPosy= 300;
 
@@ -47,7 +52,7 @@
 	var chicken = new Image();
 	chicken.src = "img/farmer.png";
 	var feathers = new Image();
-	feathers.src = "img/farmer.png";
+	feathers.src = "img/farmerDead.png";
 	
 	
 	
@@ -93,8 +98,12 @@ function movesling(dx,dy) {
 	this.s3y +=dy;
 }
 
-var mysling= new Sling(startrockx,startrocky,startrockx+80,startrocky-10,startrockx+80,
-					   startrocky+10,startrockx+70,startrocky+180,"rgb(120,20,10)");
+//var mysling= new Sling(startrockx,startrocky,startrockx+80,startrocky-10,startrockx+80,
+//					   startrocky+10,startrockx+70,startrocky+180,"rgb(120,20,10)");
+
+					   var mysling= new Sling(startrockx,startrocky,startrockx+80,startrocky-10,startrockx+80,
+					   startrocky+10,startrockx+70,startrocky+180,"rgb(184,118,57)");
+
  
 function resetSling() {
 
@@ -305,7 +314,7 @@ function finish(ev) {
 // position of the target
 function moveRR(){
     //target.sx = Math.floor((Math.random()*1000)+800); 
-	target.sx = Math.floor((Math.random()*500)+900); 
+	target.sx = Math.floor((Math.random()*600)+1100); 
 }
 
 function drawall() {
@@ -332,10 +341,10 @@ clearInterval(tid);
     
     if(triesRemaining>0){
     /// wait a beat for the impact animation to play
-   hitId = setTimeout(nextTurn,1000);
+   hitId = setTimeout(nextTurn,1500);
     }else{
     //updateScore();
-   endGameId = setTimeout(endGame,2000);
+   endGameId = setTimeout(endGame,2500);
     }
 }
 
@@ -389,7 +398,7 @@ function updateScore(){
     missed.className = "";
     //txtScore.innerHTML = "Score: " + score + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
     txtScore.innerHTML = "Score: " + score;
-    txtTries.innerHTML = "Tries: " + triesRemaining;
+    txtTries.innerHTML = "Sheep: " + triesRemaining;
 }
 
 function change() {
@@ -462,14 +471,14 @@ time, mark, audio, video {
 	/* -webkit-transition: opacity .5s ease-in-out; */
 	/*font-size:48px;*/
 	-moz-transform: scale(20);
-	-webkit-transform: scale(5);
-	transform: scale(5);
+	-webkit-transform: scale(20);
+	transform: scale(20);
 
 	top: 200px;
 	
-	-moz-transition: all .3s;	
-	-webkit-transition: all .5s;
-	transition: all .3s;
+	-moz-transition: all 1s;	
+	-webkit-transition: all 1s;
+	transition: all 1s;
  }
  
 #points {
@@ -478,16 +487,17 @@ time, mark, audio, video {
 	position:absolute;
 	/*padding: 10px;*/
 	color: white;
-	
+	letter-spacing: 2px;
 	left:900px;
-	top:400px;
+	top:700px;
 	z-index:10;
 	font-size:12px;
-	font-family: "Arial", "Helvetica", sans-serif;
-	
+	font-family: 'Alegreya SC', serif;
+	font-weight: bolder;
 /*	-moz-border-radius: 20px;
-	-moz-transform: scale(1);*/
-	text-shadow: rgba(0,0,0,.8) 1px 1px 1px;
+	-moz-transform: scale(1);
+	text-shadow: rgba(0,0,0,.8) 1px 1px 1px;*/
+	text-shadow: 0px 0px 20px rgb(0, 0, 0);
 }
 
 #missed.pointBurst {
@@ -495,46 +505,56 @@ time, mark, audio, video {
 	opacity:1;
 	/* -webkit-transition: opacity .5s ease-in-out; */
 	/*font-size:48px;*/
-    -webkit-transition: all 1.5s;
-    -moz-transition: all 1.5s;
-    transition: all 1.5s;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
  }
  
 #missed {
 	opacity:0;
 	/*background:red;*/
 	position:absolute;
-	left:740px;
-	top:650px;
+	left:650px;
+	top:250px;
 	z-index:10;
-	font-size:40px;
-	font-family: "Arial", "Helvetica", sans-serif;
-	letter-spacing: 50px;
+	font-size:200px;
+	font-family: 'Alegreya SC', serif;
+
+	color: #b87639;
+
+	text-shadow: 0px 0px 20px rgb(255, 255, 255);
+
+
 }
 #replay {
 	opacity:0;
 	background:#b87639;
 	position:absolute;
-	padding: 7px;
+
+	line-height: 70px;
 	left:830px;
-	border-color: #76491e;
-/*	border-bottom-color: #76491e;*/
+	/*border-color: #76491e;
+	border-bottom-color: #76491e;
+	
+		padding-left: 13px;
+	padding-right: 13px;
+	*/
 	border: solid;
 	cursor: pointer;
-	top:400px;
+	top:470px;
 	z-index:11;
 	font-size:48px;
 	color: white;
-	font-family: "Arial", "Helvetica", sans-serif;
-	font-weight: bold;	
+	font-family: 'Alegreya SC', serif;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	-webkit-box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);        
-        box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);
+    box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);
 	letter-spacing: -1px;
-	
-	
+	width: 190px;
+	text-align: center;
 }
+
 #replay.show{
 	opacity:1;
 	}
@@ -549,12 +569,13 @@ body{
     background-repeat: repeat-x;
 }
 #scoreBoard {
-
+	position:absolute;
 	/*background:tan;*/
-	/*position:absolute;*/
-	position:relative;
+	/*
+	position:relative;*/
 	/*left:700px;*/
-	top:150px;
+	top:600px;
+	left:800px;
 	z-index:20;
 	/*font-size:64px;
 	color: white;*/
@@ -564,9 +585,9 @@ body{
 
 	/*width:130px;*/
 	/*width:2000px;*/
-	width:300px;
+	width:275px;
 	/*width:100%;*/
-	background-color: black;
+
 	
 	height: 130px;    
 	
@@ -575,28 +596,23 @@ body{
 
     margin-left:auto;
     margin-right:auto;
-    
-	
+    border-radius: 25px;
+	font-size:48px;
+	font-family: 'Alegreya SC', serif;
+	line-height: 50px;
+	color: #76491e;
 }
 
 
 
 #txtScore{
-    font-family: "Arial", "Helvetica", sans-serif;
-    font-size:48px;
-    color: white;
-/*    margin-left:700px;
-    float: left;*/
-text-align: center;
-    
+
+	padding-top: 8px;
+	padding-left: 20px;
+
 }
 #txtTries{
-  
-    font-family: "Arial", "Helvetica", sans-serif;
-    font-size:48px;
-    color: white;
-    text-align: center;
-    
+	padding-left: 20px;
 }
 
 
@@ -607,7 +623,7 @@ text-align: center;
 Your browser doesn't support the HTML5 element canvas.
 </canvas>  
 <br/>
-<div id="scoreBoard" class=""><p id="txtScore">Score: 0 </p><p id="txtTries"> Tries: 3</p></div>
+<div id="scoreBoard" class=""><p id="txtScore">Score: 0 </p><p id="txtTries"> Sheep: 3</p></div>
 <div id="points" class="">+100</div>
 <div id="missed" class="">Missed!</div>
 <div id="replay" class="">Replay?</div>
