@@ -12,10 +12,22 @@
   #myDiv {
     width: 100%;
   }
+  #instructions{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 30;
+	background-color:rgba(255, 255, 255, 0.65);
+	top: 0px;
+	left: 0px;
+	text-align: center;
+	/*
+	line-height: 400px;
+	*/
 
+}
 
   </style>
-
 
 </head>
 
@@ -24,6 +36,17 @@
 
 
 <div id="myDiv">
-<iframe class="center" src="SlingShotGame.html" height="600" width="1000"></iframe>
+  <div id="instructions"><p id="explain">Slingshot the sheep into the farmer for points</p><p id="continue">Click anywhere to begin</p></div>
 </div>
+
+<script>
+    var	instructions = document.getElementById('instructions');
+    instructions.addEventListener('mousedown',closeInstructions,false);
+  
+  function closeInstructions(){
+    
+    window.location.href = "SlingShotGame.html";
+    }
+  
+  </script>
 </html>

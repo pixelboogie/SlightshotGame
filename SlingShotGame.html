@@ -2,9 +2,8 @@
 <html>
 <head>
     <title>PixelBoogie - Slingshot Game</title>
-   
+	<link href="https://fonts.googleapis.com/css?family=Frijole&display=swap" rel="stylesheet">
 
-	<link href="https://fonts.googleapis.com/css?family=Alegreya+SC&display=swap" rel="stylesheet">
 
 
     <script type="text/javascript">
@@ -231,16 +230,11 @@ function playGame(){
    replay.addEventListener('mousedown',replayIt,false);
 
 
-   instructions.addEventListener('mousedown',closeInstructions,false);
+ 
       
  //initial drawing 
   drawall();  
 }
-
-function closeInstructions(){
-		instructions = document.getElementById('instructions');
-		instructions.className += "hide";	
-	}
 
 
 function replayIt(){
@@ -324,8 +318,9 @@ function finish(ev) {
 
 // position of the target
 function moveRR(){
-    //target.sx = Math.floor((Math.random()*1000)+800); 
-	target.sx = Math.floor((Math.random()*600)+1100); 
+	//target.sx = 800; //min 
+	//target.sx = 1300; //max 
+	target.sx = Math.floor((Math.random()*500)+800); 
 }
 
 function drawall() {
@@ -480,6 +475,55 @@ time, mark, audio, video {
 }
 
 
+body{
+	font-family: 'Frijole', cursive;
+
+    /*background-color: blue;*/
+    background-image: url("img/bg.jpg");
+    background-color: #eac184;
+    background-repeat: no-repeat;
+
+/* fix for Chrome blurriness when scaling */
+	/* backface-visibility: hidden;  */
+	/* transform: translateZ(0); */
+	/* -webkit-font-smoothing: subpixel-antialiased; */
+	
+}
+#scoreBoard {
+	position:absolute;
+	/*background:tan;*/
+	/*
+	position:relative;*/
+	/*left:700px;*/
+	top:700px;
+	left:600px;
+	z-index:20;
+	/*font-size:64px;
+	color: white;*/
+
+/*	padding: 5px;*/
+
+
+	/*width:130px;*/
+	/*width:2000px;*/
+	/*width:100%;*/
+
+	
+	/* height: 130px;     */
+	
+	/*float: right;
+	right: 0px;*/	
+
+    margin-left:auto;
+    margin-right:auto;
+    border-radius: 25px;
+	font-size:48px;
+	/* line-height: 50px; */
+	color: #76491e;
+	
+}
+
+
 #points.pointBurst {
 	
 	opacity:1;
@@ -489,11 +533,13 @@ time, mark, audio, video {
 	-webkit-transform: scale(20);
 	transform: scale(20);
 
-	top: 200px;
+	top: 300px;
 	
-	-moz-transition: all 1s;	
-	-webkit-transition: all 1s;
-	transition: all 1s;
+	-moz-transition: all .5s;	
+	-webkit-transition: all .5s;
+	transition: all .5s;
+
+
  }
  
 #points {
@@ -503,16 +549,14 @@ time, mark, audio, video {
 	/*padding: 10px;*/
 	color: white;
 	letter-spacing: 2px;
-	left:900px;
+	left:800px;
 	top:700px;
 	z-index:10;
 	font-size:12px;
-	font-family: 'Alegreya SC', serif;
-	font-weight: bolder;
 /*	-moz-border-radius: 20px;
 	-moz-transform: scale(1);
 	text-shadow: rgba(0,0,0,.8) 1px 1px 1px;*/
-	text-shadow: 0px 0px 20px rgb(0, 0, 0);
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.467);
 }
 
 #missed.pointBurst {
@@ -523,23 +567,20 @@ time, mark, audio, video {
     -webkit-transition: all .5s;
     -moz-transition: all .5s;
     transition: all .5s;
+
+
  }
  
 #missed {
 	opacity:0;
 	/*background:red;*/
 	position:absolute;
-	left:650px;
+	left:700px;
 	top:250px;
 	z-index:10;
-	font-size:200px;
-	font-family: 'Alegreya SC', serif;
-
+	font-size:75px;
 	color: #b87639;
-
 	text-shadow: 0px 0px 20px rgb(255, 255, 255);
-
-
 }
 #replay {
 	visibility: hidden;
@@ -547,7 +588,8 @@ time, mark, audio, video {
 	position:absolute;
 
 	line-height: 70px;
-	left:830px;
+	left: 758px;
+	top: 600px;
 	/*border-color: #76491e;
 	border-bottom-color: #76491e;
 	
@@ -555,18 +597,21 @@ time, mark, audio, video {
 	padding-right: 13px;
 	*/
 	border: solid;
+	border-width: 3px;
+	border-style: outset;
+	border-color: #d79b63;
 	cursor: pointer;
-	top:470px;
+
 	z-index:11;
 	font-size:48px;
 	color: white;
-	font-family: 'Alegreya SC', serif;
+
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	-webkit-box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);        
     box-shadow:  5px 5px 5px 4px rgba(0, 0, 0, .1);
 	letter-spacing: -1px;
-	width: 190px;
+	width: 290px;
 	text-align: center;
 }
 
@@ -583,74 +628,18 @@ time, mark, audio, video {
 	}
 */
 
-body{
-  
-    /*background-color: blue;*/
-    background-image: url("img/bg.jpg");
-    background-color: #eac184;
-    /*background-repeat: no-repeat;*/
-    background-repeat: repeat-x;
-}
-#scoreBoard {
-	position:absolute;
-	/*background:tan;*/
-	/*
-	position:relative;*/
-	/*left:700px;*/
-	top:700px;
-	left:800px;
-	z-index:20;
-	/*font-size:64px;
-	color: white;*/
-
-/*	padding: 5px;*/
-
-
-	/*width:130px;*/
-	/*width:2000px;*/
-	width:275px;
-	/*width:100%;*/
-
-	
-	height: 130px;    
-	
-	/*float: right;
-	right: 0px;*/	
-
-    margin-left:auto;
-    margin-right:auto;
-    border-radius: 25px;
-	font-size:48px;
-	font-family: 'Alegreya SC', serif;
-	line-height: 50px;
-	color: #76491e;
-}
-
-
 
 #txtScore{
 
 	padding-top: 8px;
 	padding-left: 20px;
-
+	display: inline-block;
 }
 #txtTries{
 	padding-left: 20px;
+	display: inline-block;
 }
-#instructions{
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	z-index: 30;
-	background-color:rgba(255, 255, 255, 0.65);
-	top: 0px;
-	left: 0px;
-	text-align: center;
-	/*
-	line-height: 400px;
-	*/
 
-}
 .hide{
 	visibility: hidden;
 }
@@ -659,7 +648,7 @@ body{
 	position: absolute;
 	font-size: 120px;
 	font-weight: 900;
-	font-family: 'Alegreya SC', serif;
+
 	color: #745130;
 	top: 150px;
 	line-height: 120px;
@@ -667,7 +656,7 @@ body{
 #continue{
 	position: relative;
 	font-size: 18px;
-	font-family: 'Alegreya SC', serif;
+
 	color: #745130;
 	top: 450px;
 	text-align: center;
@@ -679,8 +668,6 @@ body{
 Your browser doesn't support the HTML5 element canvas.
 </canvas>  
 <br/>
-<div id="instructions"><p id="explain">Slingshot the sheep into the farmer for points</p>
-	<p id="continue">Click anywhere to begin</p></div>
 <div id="scoreBoard" class=""><p id="txtScore">Score: 0 </p><p id="txtTries"> Sheep: 3</p></div>
 <div id="points" class="">+100</div>
 <div id="missed" class="">Missed!</div>
