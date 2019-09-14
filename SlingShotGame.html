@@ -13,26 +13,26 @@
 	var myVelocity = 600;  //1200 lower = faster
 	
 	var score = 0;
-	var cwidth = 2000;
+	var cwidth = 1920;
 	var cheight = 600;
 	var ctx;
 	var canvas1;
 	var everything = [];
 	var tid;
 	var hitId;
-	var startrockx = 450; // slingshotX
+	var startrockx = 500; // slingshotX
 	var startrocky = 320; //slingshotY
 	
 	
 	var boulder = new Image();
 	boulder.src = "img/sheep.png";
-	var boulderx = 410;
+	var boulderx = 460;
 	var bouldery = 300; 
 	var boulderW = 120;
 	var boulderH = 85;
 	
 	
-	var ballx = 410;
+	var ballx = 460;
 	var bally = 300;
 	var ballrad = 35;
 	var ballradsq = ballrad*ballrad;
@@ -214,7 +214,7 @@ everything.push(cball);
 
 
 //called onload. Sets up ctx context for drawing and canvas1 for events
-function init(){
+function playGame(){
     ctx = document.getElementById('canvas').getContext('2d');
     canvas1 = document.getElementById('canvas');
     points = document.getElementById("points");
@@ -229,15 +229,26 @@ function init(){
    canvas1.addEventListener('mouseup',finish,false);
    
    replay.addEventListener('mousedown',replayIt,false);
+
+
+   instructions.addEventListener('mousedown',closeInstructions,false);
       
  //initial drawing 
   drawall();  
 }
 
+function closeInstructions(){
+		instructions = document.getElementById('instructions');
+		instructions.className += "hide";	
+	}
+
 
 function replayIt(){
     
-       window.location = 'SlingShotGame.html';
+    window.location = 'SlingShotGame.html';
+	// set replay to not visible
+	replay.className="hide";
+	  //playGame();
 }
 
 // called on mousedown
@@ -440,6 +451,10 @@ function change() {
 
 	}
 	}
+
+
+
+
 	drawall();	
 }
 
@@ -527,7 +542,7 @@ time, mark, audio, video {
 
 }
 #replay {
-	opacity:0;
+	visibility: hidden;
 	background:#b87639;
 	position:absolute;
 
@@ -556,9 +571,17 @@ time, mark, audio, video {
 }
 
 #replay.show{
+	visibility: visible;
+	/*
 	opacity:1;
-	}
 
+	*/
+	}
+	/*
+	#replay.hide{
+		visibility: hidden;
+	}
+*/
 
 body{
   
@@ -574,7 +597,7 @@ body{
 	/*
 	position:relative;*/
 	/*left:700px;*/
-	top:600px;
+	top:700px;
 	left:800px;
 	z-index:20;
 	/*font-size:64px;
@@ -614,15 +637,50 @@ body{
 #txtTries{
 	padding-left: 20px;
 }
+#instructions{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 30;
+	background-color:rgba(255, 255, 255, 0.65);
+	top: 0px;
+	left: 0px;
+	text-align: center;
+	/*
+	line-height: 400px;
+	*/
 
+}
+.hide{
+	visibility: hidden;
+}
 
+#explain{
+	position: absolute;
+	font-size: 120px;
+	font-weight: 900;
+	font-family: 'Alegreya SC', serif;
+	color: #745130;
+	top: 150px;
+	line-height: 120px;
+}
+#continue{
+	position: relative;
+	font-size: 18px;
+	font-family: 'Alegreya SC', serif;
+	color: #745130;
+	top: 450px;
+	text-align: center;
+}
 </style>
 </head>
-<body onLoad="init();">  
-<canvas id="canvas" width="2000" height="600">
+<body onLoad="playGame();">  
+<canvas id="canvas" width="1920" height="600">
 Your browser doesn't support the HTML5 element canvas.
 </canvas>  
 <br/>
+<div id="instructions"><p id="explain">Slingshot the sheep into the farmer for points</p>
+	<p id="continue">Click anywhere to begin</p></div>
 <div id="scoreBoard" class=""><p id="txtScore">Score: 0 </p><p id="txtTries"> Sheep: 3</p></div>
 <div id="points" class="">+100</div>
 <div id="missed" class="">Missed!</div>
