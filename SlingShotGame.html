@@ -6,7 +6,7 @@
     <script type="text/javascript">
 	
 	var triesRemaining = 3;
-	var myVelocity = 900;  //1200
+	var myVelocity = 1200;  //1200
 	
 	var score = 0;
 	var cwidth = 2000;
@@ -16,19 +16,20 @@
 	var everything = [];
 	var tid;
 	var hitId;
-	var startrockx = 450; //450 
-	var startrocky = 280; //280
+	var startrockx = 450; // slingshotX
+	var startrocky = 320; //slingshotY
 	
 	
 	var boulder = new Image();
 	boulder.src = "img/sheep.png";
-	 var boulderx = 410;
-	 var bouldery = 255;
-	 var boulderW = 120;
-	 var boulderH = 85;
+	var boulderx = 410;
+	var bouldery = 300; 
+	var boulderW = 120;
+	var boulderH = 85;
 	
-	var ballx = 160;
-	var bally = 200;
+	
+	var ballx = 410;
+	var bally = 300;
 	var ballrad = 35;
 	var ballradsq = ballrad*ballrad;
 	
@@ -37,8 +38,11 @@
 	var horvelocity;
 	var verticalvel1;
 	var verticalvel2;
-	var gravity = 5;  //arbitrary value. It produces nice arcs.
+	var gravity = 6;  //arbitrary value. It produces nice arcs.
 	
+	var targetStartPosy= 300;
+
+
 	
 	var chicken = new Image();
 	chicken.src = "img/farmer.png";
@@ -63,9 +67,10 @@ function Sling(bx,by,s1x,s1y,s2x,s2y,s3x,s3y,stylestring) {
 	this.moveit = movesling;
 }
 
+// slingshot initial settings
 function drawsling() {
 	ctx.strokeStyle = this.strokeStyle;
-	ctx.lineWidth = 10;
+	ctx.lineWidth = 15;
 	ctx.lineCap = 'round';
 	ctx.beginPath();
 	ctx.moveTo(this.bx,this.by);
@@ -190,8 +195,8 @@ function drawAnImage() {
 	
 }
 
-var target = new Picture(1000,210,176,224,chicken);
-var ground = new myrectangle(0,370,1,1,"rgb(240,167,65)");
+var target = new Picture(1000,targetStartPosy,176,224,chicken);
+var ground = new myrectangle(0,400,1,1,"rgb(240,167,65)");
 everything.push(target);
 everything.push(ground);
 everything.push(mysling);
@@ -285,10 +290,10 @@ function finish(ev) {
     // in ballistic arc.
     if (inmotion) {
 	inmotion = false;
-//want initial velocity to increase with length, make it the square for convenience
-//the 700 is arbitrary. It makes a nice arc!
-	 var outofcannon = distsq(mysling.bx,mysling.by,mysling.s1x,mysling.s1y)/myVelocity;
-//use angle based on line interval bx,by to s1x,s1y, the upper arm of sling
+
+	//want initial velocity to increase with length, make it the square for convenience
+	var outofcannon = distsq(mysling.bx,mysling.by,mysling.s1x,mysling.s1y)/myVelocity;
+	//use angle based on line interval bx,by to s1x,s1y, the upper arm of sling
   var angleradians = -Math.atan2(mysling.s1y-mysling.by,mysling.s1x-mysling.bx);
   horvelocity =  outofcannon*Math.cos(angleradians);
   verticalvel1 = - outofcannon*Math.sin(angleradians);
@@ -297,8 +302,10 @@ function finish(ev) {
 	}
 }
 
+// position of the target
 function moveRR(){
-    target.sx = Math.floor((Math.random()*1000)+800); 
+    //target.sx = Math.floor((Math.random()*1000)+800); 
+	target.sx = Math.floor((Math.random()*500)+900); 
 }
 
 function drawall() {
@@ -381,7 +388,7 @@ function updateScore(){
     points.className = "";
     missed.className = "";
     //txtScore.innerHTML = "Score: " + score + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-        txtScore.innerHTML = "Score: " + score;
+    txtScore.innerHTML = "Score: " + score;
     txtTries.innerHTML = "Tries: " + triesRemaining;
 }
 
@@ -393,19 +400,22 @@ function change() {
 	verticalvel1 = verticalvel2;
 	cball.moveit(dx,dy);
 	//check for hitting target
-	//var bx = cball.sx;
+	//var bxf = cball.sx;
 	//var by = cball.sy;
 	//
 	
 	var bx = cball.sx-(boulderW*.5);
 	var by = cball.sy-(boulderH*.5)
-	//check for inside of target
+
+
+	//check for hit inside of target
 	// adjust boundaries by 40 to make the hit area smaller
 	//if ((bx>=target.sx+40)&&(bx<=(target.sx+target.swidth-40))&&
 	//(by>=target.sy+40)&&(by<=(target.sy+target.sheight-40))) {
 		
-	if ((bx>=target.sx+5)&&(bx<=(target.sx+target.swidth+5))&&
-	(by>=target.sy-100)&&(by<=(target.sy+target.sheight))) {
+		
+	if ((bx>=target.sx-40)&&(bx<=(target.sx+target.swidth+100))&&
+	(by>=target.sy-100)&&(by<=(target.sy+target.sheight+100))) {
 		
 		//clearInterval(tid);
 		//change image to the feathers image
@@ -433,7 +443,7 @@ a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
-dl, dt, dd, ol, ul, li,		
+dl, dt, dd, ol, ul, li,	
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed, 
@@ -453,7 +463,8 @@ time, mark, audio, video {
 	/*font-size:48px;*/
 	-moz-transform: scale(20);
 	-webkit-transform: scale(5);
-	
+	transform: scale(5);
+
 	top: 200px;
 	
 	-moz-transition: all .3s;	
